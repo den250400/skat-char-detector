@@ -80,6 +80,7 @@ class CandidateDetector:
         :return:
         """
         polygons = []
+        polygons_valid = []
 
         for i in range(self.adaptive_thresh_n_scales):
             scale = self.adaptive_thresh_min_scale + self.adaptive_thresh_scale_step * i
@@ -100,7 +101,25 @@ class CandidateDetector:
 
                 polygons.append(approx)
 
-        return polygons
+        # Filter out parent contours
+        for i in range(len(polygons)):
+            is_parent = False
+            for j in range(i+1, len(polygons)):
+                if i == j:
+                    continue
+                for k in range(len(polygons[j])):
+                    pt = (int(polygons[j][k][0]), int(polygons[j][k][1]))
+                    cnt = polygons[i].reshape(-1, 1, 2).astype(int)
+                    if cv2.pointPolygonTest(cnt, pt, measureDist=False) != -1:
+                        is_parent = True
+                        break
+                if is_parent:
+                    break
+
+            if not is_parent:
+                polygons_valid.append(polygons[i])
+
+        return polygons_valid
 
     @staticmethod
     def reorder_corners(cnt: np.array):

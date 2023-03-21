@@ -29,7 +29,10 @@ def load_data(negative_path: str, positive_path: str, img_size=(48, 48)):
     # Load positive samples
     positive_images = []
     positive_labels = []
-    positive_dirs = [os.path.join(positive_path, dirname) for dirname in os.listdir(positive_path)]
+
+    dirnames = os.listdir(positive_path)
+    dirnames.sort(key=int)
+    positive_dirs = [os.path.join(positive_path, dirname) for dirname in dirnames]
     for i in tqdm(range(len(positive_dirs))):
         files = [os.path.join(positive_dirs[i], f) for f in os.listdir(positive_dirs[i])]
         images = [cv2.resize(cv2.imread(f, flags=cv2.IMREAD_GRAYSCALE), img_size) for f in files]
