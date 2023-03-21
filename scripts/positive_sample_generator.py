@@ -1,5 +1,6 @@
 import cv2
 from tqdm import tqdm
+import numpy as np
 import random
 import os
 
@@ -9,14 +10,25 @@ OUTPUT_PATH = "../data/positive_samples"
 SAMPLES = 2000  # Number of samples per 1 class
 
 
-def generate_sample(img, angle_range=(-7, 7), scale_range=(0.9, 1.5)):
+def generate_sample(img, angle_range=(-7, 7), scale_range=(0.9, 1.5), rotate=True):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+    if rotate:
+        gray = random_rot(gray)
     gray = random_line(gray)
     gray = random_scale(gray, scale_range)
     gray = random_rotate(gray, angle_range)
 
     return gray
+
+
+def random_rot(gray):
+    n_rot = random.randint(0, 3)
+    new_gray = gray.copy()
+    for _ in range(n_rot):
+        new_gray = np.rot90(new_gray)
+
+    return new_gray.copy()
 
 
 def random_line(img, color=0, thickness_range=(1,2)):

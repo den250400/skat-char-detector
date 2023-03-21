@@ -4,7 +4,7 @@ import os
 from imutils import pad_to_shape
 
 
-def align_letter(letter_img, output_size=(640, 640)):
+def align_letter(letter_img, output_size=(64, 64)):
     img_h, img_w = letter_img.shape[0], letter_img.shape[1]
     contours, hierarchy = cv2.findContours(letter_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     x, y, w, h = cv2.boundingRect(contours[0])
