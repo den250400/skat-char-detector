@@ -3,6 +3,7 @@ import os
 import torch
 import torch.nn.functional as F
 import numpy as np
+import pickle
 from tqdm import tqdm
 
 
@@ -71,7 +72,27 @@ def create_dataloaders(negative_path: str, positive_path: str, shuffle: bool = T
     return train_loader, val_loader
 
 
+def create_dataloaders_from_numpy(images: np.array, labels: np.array, shuffle: bool = True, batch_size=32,
+                                  n_classes=37, validation_fraction=0.1):
+    data = list(zip(list(images), list(labels)))
+    dataset = CustomDataset(data, n_classes=n_classes)
+
+    gen = torch.Generator().manual_seed(42)
+    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [1 - validation_fraction, validation_fraction],
+                                                               generator=gen)
+
+    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+                                               batch_size=batch_size,
+                                               shuffle=shuffle)
+    val_loader = torch.utils.data.DataLoader(dataset=val_dataset,
+                                             batch_size=batch_size,
+                                             shuffle=shuffle)
+
+    return train_loader, val_loader
+
+
 if __name__ == "__main__":
-    dataloader, _ = create_dataloaders(negative_path='./data/negative_samples', positive_path='./data/positive_samples')
-    for img, label in tqdm(dataloader):
-        print(img, label)
+    images, labels = load_data(negative_path='./data/negative_samples', positive_path='./data/positive_samples')
+    np.save("./data/images.npy", np.array(images))
+    np.save("./data/labels.npy", np.array(labels))
+    create_dataloaders_from_numpy(np.array(images), np.array(labels))
