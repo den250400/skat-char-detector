@@ -8,7 +8,7 @@ import imutils
 class CandidateDetector:
     def __init__(self, adaptive_thresh_min_scale=3, adaptive_thresh_scale_step=10, adaptive_thresh_n_scales=3,
                  min_perimeter_rate=0.05, max_cnt_aspect_ratio=1.5, min_cnt_angle=70, marker_corner_size=0.1,
-                 corner_saturation_thresh=0.3, gamma=0.3):
+                 corner_saturation_thresh=1.0, gamma=0.3):
         self.adaptive_thresh_min_scale = adaptive_thresh_min_scale
         self.adaptive_thresh_scale_step = adaptive_thresh_scale_step
         self.adaptive_thresh_n_scales = adaptive_thresh_n_scales
