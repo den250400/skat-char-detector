@@ -52,7 +52,7 @@ def load_data(negative_path: str, positive_path: str, img_size=(48, 48)):
     return images, labels
 
 
-def create_dataloaders(negative_path: str, positive_path: str, shuffle: bool = True, batch_size=32, n_classes=37,
+def create_dataloaders(negative_path: str, positive_path: str, shuffle: bool = True, batch_size=32, n_classes=35,
                        validation_fraction=0.1):
     images, labels = load_data(negative_path, positive_path)
     data = list(zip(images, labels))
@@ -73,7 +73,7 @@ def create_dataloaders(negative_path: str, positive_path: str, shuffle: bool = T
 
 
 def create_dataloaders_from_numpy(images: np.array, labels: np.array, shuffle: bool = True, batch_size=32,
-                                  n_classes=37, validation_fraction=0.1):
+                                  n_classes=35, validation_fraction=0.1):
     data = list(zip(list(images), list(labels)))
     dataset = CustomDataset(data, n_classes=n_classes)
 
