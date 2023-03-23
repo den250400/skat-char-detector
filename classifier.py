@@ -3,7 +3,7 @@ import torch
 
 
 class Classifier:
-    def __init__(self, model_path, n_classes=37):
+    def __init__(self, model_path, n_classes=35):
         self.model = Model(n_classes=n_classes)
         self.model.load_state_dict(torch.load(model_path))
 
