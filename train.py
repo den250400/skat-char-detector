@@ -8,9 +8,12 @@ from procedures import train, test
 
 SAVE_PATH = "models"
 
+images = np.load("./data/images.npy")
+labels = np.load("./data/labels.npy")
+
 train_loader, val_loader = create_dataloaders_from_numpy(images=np.load("./data/images.npy"),
                                                          labels=np.load("./data/labels.npy"))
-model = Model(n_classes=37, leaky_slope=0.1)
+model = Model(n_classes=35, leaky_slope=0.1)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 train(model=model,
