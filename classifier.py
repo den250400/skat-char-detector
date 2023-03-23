@@ -13,5 +13,5 @@ class Classifier:
         output = output.detach().to('cpu').numpy()
         output = output.reshape(-1).argmax()
 
-        return output
+        return output - 1
 

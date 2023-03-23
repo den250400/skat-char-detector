@@ -1,14 +1,15 @@
 import torch.optim as optim
+import numpy as np
 
 from model import Model
-from dataloader import create_dataloaders
+from dataloader import create_dataloaders_from_numpy
 from procedures import train, test
 
 
-SAVE_PATH = "./models"
+SAVE_PATH = "models"
 
-train_loader, val_loader = create_dataloaders(negative_path='./data/negative_samples',
-                                              positive_path='./data/positive_samples')
+train_loader, val_loader = create_dataloaders_from_numpy(images=np.load("./data/images.npy"),
+                                                         labels=np.load("./data/labels.npy"))
 model = Model(n_classes=37, leaky_slope=0.1)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
