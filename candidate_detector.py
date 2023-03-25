@@ -92,11 +92,14 @@ class CandidateDetector:
                 approx = cv2.approxPolyDP(cnt, len(cnt) * 0.03, True).reshape(-1, 2)
                 arc_len = cv2.arcLength(approx, True)
 
-                if len(approx) != 4 or not cv2.isContourConvex(approx) or self.compute_min_angle(approx) < self.min_cnt_angle:
+                if len(approx) != 4 or not cv2.isContourConvex(approx):
                     continue
 
                 aspect_ratio = self.compute_aspect_ratio(approx)
                 if arc_len < img_diag * self.min_perimeter_rate or aspect_ratio > self.max_cnt_aspect_ratio:
+                    continue
+
+                if self.compute_min_angle(approx) < self.min_cnt_angle:
                     continue
 
                 polygons.append(approx)
