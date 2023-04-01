@@ -8,17 +8,26 @@ from tqdm import tqdm
 
 
 class CustomDataset(torch.utils.data.dataset.Dataset):
-    def __init__(self, _dataset, n_classes):
+    def __init__(self, _dataset):
         self.dataset = _dataset
-        self.n_classes = n_classes
 
     def __getitem__(self, index):
         example, target = self.dataset[index]
-        return torch.tensor(example, dtype=torch.float).unsqueeze(0), \
-               F.one_hot(torch.tensor(target, dtype=torch.int64), self.n_classes).type(torch.float32)
+        return torch.tensor(example, dtype=torch.float).unsqueeze(0), torch.tensor(target, dtype=torch.float32)
 
     def __len__(self):
         return len(self.dataset)
+
+
+def preprocess_labels(labels: np.array):
+    labels = labels.astype(int)
+    one_hot = np.zeros((labels.size, labels.max() + 1))
+    one_hot[np.arange(labels.size), labels] = 1
+
+    # Transform zero-index to confidence
+    one_hot[:, 0] = np.fabs(1 - one_hot[:, 0])
+
+    return one_hot
 
 
 def load_data(negative_path: str, positive_path: str, img_size=(48, 48)):
@@ -52,11 +61,12 @@ def load_data(negative_path: str, positive_path: str, img_size=(48, 48)):
     return images, labels
 
 
-def create_dataloaders(negative_path: str, positive_path: str, shuffle: bool = True, batch_size=32, n_classes=35,
+def create_dataloaders(negative_path: str, positive_path: str, shuffle: bool = True, batch_size=32,
                        validation_fraction=0.1):
     images, labels = load_data(negative_path, positive_path)
+    labels = preprocess_labels(labels)
     data = list(zip(images, labels))
-    dataset = CustomDataset(data, n_classes=n_classes)
+    dataset = CustomDataset(data)
 
     gen = torch.Generator().manual_seed(42)
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [1 - validation_fraction, validation_fraction],
@@ -73,9 +83,10 @@ def create_dataloaders(negative_path: str, positive_path: str, shuffle: bool = T
 
 
 def create_dataloaders_from_numpy(images: np.array, labels: np.array, shuffle: bool = True, batch_size=32,
-                                  n_classes=35, validation_fraction=0.1):
+                                  validation_fraction=0.1):
+    labels = preprocess_labels(labels)
     data = list(zip(list(images), list(labels)))
-    dataset = CustomDataset(data, n_classes=n_classes)
+    dataset = CustomDataset(data)
 
     gen = torch.Generator().manual_seed(42)
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [1 - validation_fraction, validation_fraction],
@@ -96,3 +107,4 @@ if __name__ == "__main__":
     np.save("./data/images.npy", np.array(images))
     np.save("./data/labels.npy", np.array(labels))
     create_dataloaders_from_numpy(np.array(images), np.array(labels))
+

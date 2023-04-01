@@ -8,10 +8,14 @@ class Classifier:
         self.model.load_state_dict(torch.load(model_path))
 
     def predict(self, img):
-        img_tensor = torch.tensor(img).view(1, 1, img.shape[0], img.shape[1]).type(torch.float32)
-        output = self.model(img_tensor)
-        output = output.detach().to('cpu').numpy()
-        output = output.reshape(-1).argmax()
+        with torch.no_grad():
+            img_tensor = torch.tensor(img).view(1, 1, img.shape[0], img.shape[1]).type(torch.float32)
+            output = self.model(img_tensor)
+            confidence = torch.nn.Sigmoid()(output[0, 0]).to('cpu').item()
+            class_scores = torch.nn.Softmax()(output[0, 1:]).to('cpu').numpy()
 
-        return output - 1
+        class_prediction = class_scores.argmax()
+        print(class_scores.max())
+
+        return confidence, class_prediction
 
