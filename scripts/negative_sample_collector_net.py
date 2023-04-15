@@ -6,7 +6,7 @@ from detector import Detector
 import imutils
 
 
-PATH = "../data/negative_samples"
+PATH = "../data/positive_samples_real/7"
 MODEL_PATH = "../models/0.pth"
 ALPHABET_PATH = "../data/armenian_alphabet"
 CONFIDENCE_THRESH = 0.5
@@ -22,8 +22,11 @@ def init_counter(path):
         return 0
 
 
+if not os.path.exists(PATH):
+    os.makedirs(PATH)
+
 detector = Detector(model_path=MODEL_PATH, alphabet_path=ALPHABET_PATH)
-capture = cv2.VideoCapture("/home/denis/Downloads/5 Best Simple & Easy Cinematic Drone Shots - DJI Drones.mp4")
+capture = cv2.VideoCapture(0)
 
 counter = init_counter(PATH)
 while True:
@@ -34,7 +37,7 @@ while True:
         for detection in detections:
             candidate_img = imutils.warp_perspective(frame, detection['coords'])
             candidate_binarized = 255 - imutils.binarize_image(candidate_img)
-            cv2.imshow('Candidate', candidate_binarized)
+            cv2.imshow('Candidate', cv2.resize(cv2.resize(candidate_binarized, OUTPUT_SIZE), (480, 480), interpolation=cv2.INTER_NEAREST))
             cv2.imwrite(os.path.join(PATH, "%i.png" % counter), cv2.resize(candidate_binarized, OUTPUT_SIZE))
             counter += 1
 
