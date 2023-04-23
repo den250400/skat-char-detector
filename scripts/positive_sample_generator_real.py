@@ -10,12 +10,11 @@ OUTPUT_PATH = "../data/positive_samples_real_generated"
 SAMPLES = 2000  # Number of samples per 1 class
 
 
-def generate_sample(img, angle_range=(-7, 7), scale_range=(0.9, 1.5), rotate=True):
+def generate_sample(img, angle_range=(-5, 5), scale_range=(0.9, 1.3), rotate=True):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     if rotate:
         gray = random_rot(gray)
-    gray = random_line(gray)
     gray = random_scale(gray, scale_range)
     gray = random_rotate(gray, angle_range)
 
@@ -60,12 +59,12 @@ classes = [filename.split('.')[0] for filename in alphabet_files]
 alphabet_files = [os.path.join(REAL_DATA_PATH, f) for f in alphabet_files]
 alphabet = [cv2.imread(f) for f in alphabet_files]
 """
-classes = os.listdir(REAL_DATA_PATH)
+classes = sorted(os.listdir(REAL_DATA_PATH), key=int)
 class_dirs_input = [os.path.join(REAL_DATA_PATH, c) for c in classes]
 
 # Create class directories
-class_dirs = [os.path.join(OUTPUT_PATH, c) for c in classes]
-for class_dir in class_dirs:
+class_dirs_output = [os.path.join(OUTPUT_PATH, c) for c in classes]
+for class_dir in class_dirs_output:
     try:
         os.makedirs(class_dir)
     except FileExistsError:
@@ -73,10 +72,15 @@ for class_dir in class_dirs:
 
 
 print("Generating samples...")
-for i in tqdm(range(len(class_dirs))):
+for i in tqdm(range(len(class_dirs_input))):
     for j in range(SAMPLES):
-        transformed_img = generate_sample(alphabet[i])
-        cv2.imwrite(os.path.join(class_dirs[i], "%i.png" % j), transformed_img)
+        # Sample random image from the current class
+        img_paths = [os.path.join(class_dirs_input[i], f) for f in os.listdir(class_dirs_input[i])]
+        idx = random.randint(0, len(img_paths)-1)
+        img = cv2.imread(img_paths[i])
+
+        transformed_img = generate_sample(img)
+        cv2.imwrite(os.path.join(class_dirs_output[i], "%i.png" % j), transformed_img)
         """
         cv2.imshow("Sample", cv2.resize(transformed_img, (512, 512), interpolation=cv2.INTER_NEAREST))
         cv2.waitKey()

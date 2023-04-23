@@ -103,7 +103,8 @@ def create_dataloaders_from_numpy(images: np.array, labels: np.array, shuffle: b
 
 
 if __name__ == "__main__":
-    images, labels = load_data(negative_path='./data/negative_samples', positive_path='./data/positive_samples')
+    images, labels = load_data(negative_path='./data/negative_samples',
+                               positive_path='./data/positive_samples_real_generated')
     np.save("./data/images.npy", np.array(images))
     np.save("./data/labels.npy", np.array(labels))
     create_dataloaders_from_numpy(np.array(images), np.array(labels))
