@@ -20,5 +20,5 @@ train(model=model,
       train_loader=train_loader,
       val_loader=val_loader,
       optimizer=optimizer,
-      epochs=1,
+      epochs=20,
       save_path=SAVE_PATH)

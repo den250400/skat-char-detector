@@ -58,8 +58,6 @@ def test(model, test_loader, confidence_thresh: float = 0.5):
 
             # Correct confidence
             pred = (output[:, 0] > confidence_thresh).type(torch.int64)
-            pred_numpy = pred.numpy()
-            target_numpy = target[:, 0].numpy()
             correct_conf += pred.eq(target[:, 0]).sum().item()
 
     test_loss /= len(test_loader.dataset)
