@@ -11,10 +11,11 @@ capture = cv2.VideoCapture(0)
 while True:
     ret, frame = capture.read()
     detections = detector.detect(frame)
-    detector.draw_detections(frame, detections)
+    print(detections)
+    #detector.draw_detections(frame, detections)
 
-    cv2.imshow('Frame', frame)
+    #cv2.imshow('Frame', frame)
 
-    keyboard = cv2.waitKey(30)
-    if keyboard == 'q' or keyboard == 27:
-        break
+    #keyboard = cv2.waitKey(30)
+    #if keyboard == 'q' or keyboard == 27:
+    #    break

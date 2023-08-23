@@ -15,7 +15,7 @@ class Classifier:
             class_scores = torch.nn.Softmax()(output[0, 1:]).to('cpu').numpy()
 
         class_prediction = class_scores.argmax()
-        print(class_scores.max())
+        # print(class_scores.max())
 
         return confidence, class_prediction
 

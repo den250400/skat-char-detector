@@ -68,7 +68,7 @@ class CandidateDetector:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, thresh_ksize, 3)
-        cv2.imshow('Gray', np.append(gray, thresh, axis=1))
+        # cv2.imshow('Gray', np.append(gray, thresh, axis=1))
 
         return thresh
 
